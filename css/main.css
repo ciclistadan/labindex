@@ -1,0 +1,28 @@
+/* 
+    Document   : main
+    Created on : Mar 26, 2011, 7:51:45 PM
+    Author     : ciclistadan
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize main CSS
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+body {
+    font-family: Courier New, monospace;
+    font-size: 1em;
+    overflow: scroll;
+  
+}
+
+.hidden{
+    display: none;
+}
+
+/*notes*/
+/*margin: 0 auto; will set no top and bottom margin and center left/right*/
+
+/*use prefixr to expand css prefixes for various browsers, ctrl-cmd-x in any section will fix it (try with transition:all 1s; )*/
