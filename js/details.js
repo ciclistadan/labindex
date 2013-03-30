@@ -1,6 +1,6 @@
 /* 
  * these add click functionality to each .reagent_div titlebar that toggles display of detail information
- * 
+ * adding text via sublimetext 2
  */
 
 
