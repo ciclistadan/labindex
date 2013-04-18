@@ -1,0 +1,45 @@
+<div id="185" class="reagent_div" type="antibody">
+	<div class="reagent_titlebar">
+		<div class="titlebar_value">G3BP antibody</div>
+	</div>
+	<div class="reagent_details">
+		<div class="reagent_detail r_clonality" field="r_clonality">
+			<div class="detail_name" >clonality</div>
+			<div class="detail_value">
+				<input type="text">monoclonal</input>
+			</div>
+		</div>
+		<div class="reagent_detail r_clonality" field="r_clonality">
+			<div class="detail_name" >clonality</div>
+			<div class="detail_value">monoclonal</div>
+		</div>		
+		<div class="reagent_detail r_clonality" field="r_clonality">
+			<div class="detail_name" >clonality</div>
+			<div class="detail_value">monoclonal</div>
+		</div>
+	</div>
+</div>
+
+//new ajax syntax
+function update_detail(new_value, field, id){
+    var status;
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: "utility/update_reagent_detail.php",
+        dataType: 'json',
+        data: {
+            field: field,
+            id: id,
+            new_value: new_value
+        }
+    })
+    .done(function( data ) {
+        if(data.rows == 1){
+             status = 1;
+        }
+        else{ status = 0; }
+    })
+    .fail(function(){status = 0;});
+return status;
+}
