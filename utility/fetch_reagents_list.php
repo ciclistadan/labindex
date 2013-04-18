@@ -26,7 +26,7 @@ if (isset($_GET['keyword'])) {
     if (isset($_SESSION['qty'])) {
         $qty = mysql_real_escape_string(trim($_SESSION['qty']));
     } else {
-        $qty = 25;
+        $qty = 20;
     }
 
     // determine how many pages are needed

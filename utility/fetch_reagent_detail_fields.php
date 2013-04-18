@@ -4,7 +4,7 @@ session_start();
 require_once 'database.php';
 
 //check to make sure the function sent a value for the type of reagent
-// currently this only checks that there is a value, if a strings is sent that is not a valid type the 'all' fields are returned
+// currently this only checks that there is a value, if a strings is sent that is not a valid type the 'all' fields are still returned
 // TODO: further validation that $_POST['r_reagent_type'] is an acceptable reagent type 
 if (isset($_POST['r_reagent_type'])) {
 
@@ -15,7 +15,7 @@ if (isset($_POST['r_reagent_type'])) {
     if (mysql_num_rows($query) > 0) {
         $fields = array();
 
-        //fetch each query row and push it into the $fields object
+        //fetch each query row, since this is a POST you need to  push it into the $fields object and return an object
         for ($x = 0; $x < mysql_num_rows($query); $x++) {
             $row = mysql_fetch_assoc($query);
 
@@ -43,7 +43,7 @@ if (isset($_POST['r_reagent_type'])) {
 }
 //else return rows=0
 else {
-        $response = array(rows   => '0');
-        echo json_encode($response);
+    $response = array(rows   => '0');
+    echo json_encode($response);
 }
 ?>
