@@ -24,8 +24,11 @@ function refresh_search(keyword, page) {
                     //create entry container div for each reagent
                     $(document.createElement('div'))
                     .attr('id', val.r_rid)
+                    .attr('rid', val.r_rid)
                     .attr('type', val.r_reagent_type)
+                    .attr('table', 'reagent_detail')
                     .addClass('reagent_div')
+                    .addClass('table_id')
                     .appendTo("#content_container");
 
                     $(document.createElement('div'))

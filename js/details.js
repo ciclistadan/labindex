@@ -20,93 +20,94 @@ function bind_titlebar_functions(single_element) {
         //if placeholder is in the #side
         if($('#side').find('.placeholder').first().length == 1){
             $(this).parent().replaceWith($('#side').find('.placeholder').first()).appendTo($('#side'));
-            type = $(this).parent().attr('type');
-            id = $(this).parent().attr('id');
-            create_fields(type,id);
         }
         //else placeholder in in the list and another reagent is in the #side
         else{
-            $('#side').find('.reagent_details').remove();
+            $('#side').find('.reagent_titlebar').siblings().remove();
             bind_titlebar_functions($('#side').find('.reagent_titlebar'));
 
             $('.placeholder').first().replaceWith($('#side').find('.reagent_div')).appendTo('#side');
             $(this).closest('.reagent_div').replaceWith($('#side').find('.placeholder')).appendTo($('#side'));
+        }
             type = $(this).parent().attr('type');
             id = $(this).parent().attr('id');
             create_fields(type,id);
-        }
+            create_aliquots(id);
+
     });
 }
 
 function create_fields(type,id) {
-    var data = {
-        r_reagent_type: type
-    };
-// alert(type);
+
     $.ajax({
         async: false,
         type: "POST",
         url: "utility/fetch_reagent_detail_fields.php",
         dataType: 'json',
-        data: data,
-        success: function(data){
-            if(data.rows > 0){
-                //create a div for my details
+        data: { r_reagent_type: type}
+    })
+    .done(function(data){
+
+        if(data.rows > 0){
+            //create a div for all details and aliquots
+            $(document.createElement('div'))
+            .addClass('reagent_details')
+            .addClass('table')
+            .attr('table','details')
+            .appendTo("#"+id);
+
+            //make an element for all fields
+            $.each(data.fields, function(key, val) {
                 $(document.createElement('div'))
-                .addClass('reagent_details')
-                .appendTo("#"+id);
-                //go ahead and make an element for all fields, use css to format or hide as appropriate based on class or attr:field (e.g. we don't need to display r_rid)
-                $.each(data.fields, function(key, val) {
-                    $(document.createElement('div'))
-                    .addClass('reagent_detail')
-                    .addClass('small_field')
-                    .addClass(val.field_attr_column_name)
-                    .attr('field',val.field_attr_column_name)
-                    .appendTo("#"+id +" > .reagent_details");
+                .addClass('reagent_detail')
+                .addClass('small_field')
+                .addClass(val.field_attr_column_name)
+                .attr('field',val.field_attr_column_name)
+                .appendTo("#"+id +" > .reagent_details");
 
-                    $(document.createElement('div'))
-                    .addClass('detail_name')
-                    .text(val.field_attr_full_name)
-                    .appendTo("#"+id+" > .reagent_details > [field="+val.field_attr_column_name+"]");
+                $(document.createElement('div'))
+                .addClass('detail_name')
+                .text(val.field_attr_full_name)
+                .appendTo("#"+id+" > .reagent_details > [field="+val.field_attr_column_name+"]");
 
-                    $(document.createElement('div'))
-                    .addClass('detail_value')
-                    .appendTo("#"+id+" > .reagent_details > [field="+val.field_attr_column_name+"]");
+                $(document.createElement('div'))
+                .addClass('detail_value')
+                .appendTo("#"+id+" > .reagent_details > [field="+val.field_attr_column_name+"]");
 
-                    $(document.createElement('textarea'))
-                    .attr('type','text')
-                    .val(get_detail_value(val.field_attr_column_name, id))
-                    .appendTo("#"+id+" > .reagent_details > [field="+val.field_attr_column_name+"] > .detail_value");
+                $(document.createElement('textarea'))
+                .attr('type','text')
+                .appendTo("#"+id+" > .reagent_details > [field="+val.field_attr_column_name+"] > .detail_value");
 
-                    bind_edit_functions("#"+id+" > .reagent_details > [field="+val.field_attr_column_name+"] > .detail_value > textarea");
-                });
+                bind_edit_functions("#"+id+" > .reagent_details > [field="+val.field_attr_column_name+"] > .detail_value > textarea");
+            });
 
-         }
-         else{
-             $(document.createElement('div')).text("there was a problem loading these details (  sql query returned no results)").appendTo("#"+id);
-         }
-
-         },
-         error: function(){
-           $(document.createElement('div')).text("there was a problem loading these details (json return error)").appendTo("#"+id);
-         }
-    });
+           //populate all field values individualy
+           //TODO change this to a bulk ajax request similar to above
+           $("#"+id).find('textarea').each(function (){
+                var field = $(this).closest('.reagent_detail').attr('field');
+               $(this).val(get_detail_value(field, id));
+           });
+        }
+        else{
+            $(document.createElement('div')).text("there was a problem loading these detai          l query returned no results)").appendTo("#"+id);
+        }
+    })
+    .fail(function(){
+        $(document.createElement('div')).text("there was a problem loading these details (json return error)").appendTo("#"+id);
+        });
 }
-
-
 
 function get_detail_value(field, id){
     var retval = 'pre';
-    var data = {
-        r_rid: id,
-        r_field: field
-    };
     $.ajax({
         async: false,
         type: "POST",
         url: "utility/fetch_field_value.php",
         dataType: 'json',
-        data: data,
+        data: {
+        r_rid: id,
+        r_field: field
+        },
         success: function(data){
             if(data.rows == 1){
                 retval = data.return_value;
@@ -118,19 +119,36 @@ function get_detail_value(field, id){
     return retval;
 }
 
+// TODO: in the middle of editing this function, 
+// trying to abstract it to work as an 
+// update function for reagent details, aliquots, and containers...
 function bind_edit_functions(element){
     $(element)
     .focus(function(){
         var previous = $(element).val();
-        $(element).addClass('editing').addClass('ui-state-highlight').attr('previous',previous);
+        $(element).addClass('editing').attr('previous',previous);
+        if($(this).hasClass('default_value')){
+            $(this).val('');
+        }
     })
     .blur(function(){
-        if($(element).val() != $(element).attr('previous')){
-            var new_value = $(element).val();
-            var field = $(element).closest('.reagent_detail').attr('field');
-            var id = $(element).closest('.reagent_div').attr('id');
+        //nothing is added to a cleared default value, replace it with previous default
+        if( $(element).val()==="" && $(element).hasClass('default_value') ){
+            $(element).val( $(element).attr('previous') );
+            $(element).removeClass('editing').removeAttr('previous').each(function(){width_adjust(this);});
+        }
 
-            var updated = update_detail(new_value, field, id);
+        else if($(element).val() != $(element).attr('previous')){
+
+            if( $(element).hasClass('default_value') ){$(element).removeClass('default_value');}
+
+            var new_value = $(element).val();
+            var table = $(element).closest('.table_id').attr('table');
+            var col = $(element).closest('[field]').attr('field');
+            var row = $(element).closest('[rid]').attr('rid');
+
+            var updated = update_detail(new_value, col, row, table);
+
             if(updated){
                 $(element).removeClass('editing').removeAttr('previous');
             }
@@ -143,8 +161,8 @@ function bind_edit_functions(element){
         }
     });
 }
-
-function update_detail(new_value, field, id){
+// type refers to reagent 'detail' or 'aliquot'
+function update_detail(new_value, col, row, table){
     var status;
     $.ajax({
         async: false,
@@ -152,17 +170,18 @@ function update_detail(new_value, field, id){
         url: "utility/update_reagent_detail.php",
         dataType: 'json',
         data: {
-            field: field,
-            id: id,
-            new_value: new_value
+            col: col,
+            row: row,
+            new_value: new_value,
+            table: table
         }
     })
     .done(function( data ) {
         if(data.rows == 1){
-             status = 1;
-        }
-        else{ status = 0; }
-    })
+           status = 1;
+       }
+       else{ status = 0; }
+   })
     .fail(function(){status = 0;});
     return status;
 }

@@ -10,6 +10,7 @@
     <!--my separate js extensions -->
     <script type="text/javascript" src="./js/refresh_search.js"> </script>
     <script type="text/javascript" src="./js/details.js"> </script>
+    <script type="text/javascript" src="./js/aliquots.js"> </script>
 
     <!--jQuery library and UI extension -->
     <script type="text/javascript" src="./jquery-ui-1.10.0.custom/js/jquery-1.9.0.js" > </script>
@@ -46,6 +47,13 @@
         // assign page control functions
         <?php $_SESSION['qty'] = 18; ?>
 
+        //test function here
+        $('#test').click(function(){
+            var test = $('.titlebar_value').closest('[id]').attr('id');
+            alert(test);
+        });
+
+
     });
     </script>
 </head>
@@ -55,6 +63,7 @@
         <div id="navbar">
             <a href="http://connorlab.com/">Connor Lab</a>
             <a href="http://localhost/labindex/index.php?search=tw2/">LabIndex Database</a>
+            <a id="test">Test Button</>
         </div>
         <div id="top">
             <div id="search"><input id="search_input" type="text" value="search"></div>
