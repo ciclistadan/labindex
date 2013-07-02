@@ -1,11 +1,10 @@
 function refresh_search(keyword, page) {
 
-    //    disable search box while function is running
-    $('input#search_input').addClass('loading');
-    $("#content_container").children().remove().addClass('loading');
+    // TODO    disable search box while function is running, add loading gifs
+    $("#content_container").children().remove();
     $('#side').children().remove();
     $('.page_navigator').remove();
-    
+
 
     //search parameters
     var url = "";
@@ -40,7 +39,8 @@ function refresh_search(keyword, page) {
                     .addClass('titlebar_value')
                     .appendTo("#"+val.r_rid+" > .reagent_titlebar");
                 });
-                //create page navigation
+// TODO automatically launch if results return a single totalRows
+
                 for (var i = 1; i <= data.pages; i++) {
                     var current_search = search_input;
                     var current_page   = i;

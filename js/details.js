@@ -31,8 +31,11 @@ function bind_titlebar_functions(single_element) {
         }
             type = $(this).parent().attr('type');
             id = $(this).parent().attr('id');
+
             create_fields(type,id);
             create_aliquots(id);
+
+
 
     });
 }
@@ -60,7 +63,7 @@ function create_fields(type,id) {
             $.each(data.fields, function(key, val) {
                 $(document.createElement('div'))
                 .addClass('reagent_detail')
-                .addClass('small_field')
+                .addClass(val.field_class)
                 .addClass(val.field_attr_column_name)
                 .attr('field',val.field_attr_column_name)
                 .appendTo("#"+id +" > .reagent_details");
@@ -119,28 +122,31 @@ function get_detail_value(field, id){
     return retval;
 }
 
-// TODO: in the middle of editing this function, 
-// trying to abstract it to work as an 
+// TODO: in the middle of editing this function,
+// trying to abstract it to work as an
 // update function for reagent details, aliquots, and containers...
 function bind_edit_functions(element){
     $(element)
     .focus(function(){
+        //remove default value on focus
+        if($(this).val() === $(this).attr('default_value')){
+            $(this).val('');
+
+        //remember non-default values in 'previous' attribute
         var previous = $(element).val();
         $(element).addClass('editing').attr('previous',previous);
-        if($(this).hasClass('default_value')){
-            $(this).val('');
         }
     })
     .blur(function(){
-        //nothing is added to a cleared default value, replace it with previous default
-        if( $(element).val()==="" && $(element).hasClass('default_value') ){
+        //do nothing if unchanged
+        if($(element).val() === $(element).attr('previous')){
+
             $(element).val( $(element).attr('previous') );
             $(element).removeClass('editing').removeAttr('previous').each(function(){width_adjust(this);});
         }
 
+        //update if changed
         else if($(element).val() != $(element).attr('previous')){
-
-            if( $(element).hasClass('default_value') ){$(element).removeClass('default_value');}
 
             var new_value = $(element).val();
             var table = $(element).closest('.table_id').attr('table');
@@ -153,12 +159,17 @@ function bind_edit_functions(element){
                 $(element).removeClass('editing').removeAttr('previous');
             }
             else{
-                $(element).addClass('error').focus();
+                $(element).removeClass('editing').addClass('error').focus();
             }
         }
-        else{
-            $(element).removeClass('editing').removeAttr('previous');
+
+        // replace with default if blank
+        if($(element).val().length == 0){
+            $(element).val( $(element).attr('default_value'));
+            width_adjust(element);
         }
+
+
     });
 }
 // type refers to reagent 'detail' or 'aliquot'
