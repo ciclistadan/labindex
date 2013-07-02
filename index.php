@@ -1,11 +1,12 @@
 <?php session_start(); ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
     "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>LabIndex Database</title>
     <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <link rel="stylesheet" type="text/css" href="./css/buttons.css">
 
     <!--my separate js extensions -->
     <script type="text/javascript" src="./js/refresh_search.js"> </script>
@@ -25,9 +26,9 @@
         } else { echo ""; }
         ?>";
 
-    // populate search textbox              
-    if(keyword.length > 0){ 
-        $("#search_input").attr("value",keyword); 
+    // populate search textbox
+    if(keyword.length > 0){
+        $("#search_input").attr("value",keyword);
         refresh_search(keyword);
     }
 
@@ -49,8 +50,7 @@
 
         //test function here
         $('#test').click(function(){
-            var test = $('.titlebar_value').closest('[id]').attr('id');
-            alert(test);
+
         });
 
 
