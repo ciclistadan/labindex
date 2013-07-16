@@ -4,10 +4,10 @@ function create_aliquots(rid) {
     $('div .aliquot_titlebar').remove();
     $('div .aliquot_details').remove();
 
+//create a titlebar for the aliquots section
     $(document.createElement('div'))
     .addClass('aliquot_titlebar')
-    .appendTo('[rid='+rid+']');
-
+    .appendTo('[identifier='+rid+']');
 
     $(document.createElement('span'))
     .addClass('aliquot_titlebar_value')
@@ -18,16 +18,17 @@ function create_aliquots(rid) {
     $(document.createElement('a'))
     .text(' (+add)')
     .click(function(){
-        var rid = $('#side .reagent_div').attr('rid');
+        var rid = $('#side .reagent_div').attr('identifier');
         new_aliquot(rid);
     })
     .appendTo(".aliquot_titlebar");
 
+//create a container for all the aliquots
     $(document.createElement('div'))
     .addClass('aliquot_details')
-    .addClass('table')
+    // .addClass('table')
     .attr('table','aliquots')
-    .appendTo('[rid='+rid+']');
+    .appendTo('[identifier='+rid+']');
 
     $.ajax({
         async: false,
@@ -43,24 +44,20 @@ function create_aliquots(rid) {
             $(document.createElement('div'))
             .addClass('aliquot_detail')
             .addClass('table_id')
-            .attr('aqid',val.aq_aqid)
+            .attr('identifier',val.aq_aqid)
             .attr('table','aliquot')
             .appendTo('.aliquot_details');
 
-            //create container details and button
-            $(document.createElement('a'))
-                .addClass('button')
-                .addClass('container')
-                .addClass('table_id')
-                .attr('cid',val.c_cid)
-                .addClass('aliquot_container')
-                .text(val.c_cname)
-                .appendTo('.aliquot_detail[aqid='+val.aq_aqid+']');
+            //create container details
 
-                $(document.createElement('span'))
-                .addClass('container_temp')
-                .text("  ("+val.c_temp+")")
-                .appendTo('[aqid='+val.aq_aqid+'] a');
+            $(document.createElement('select'))
+            .addClass('container_selector')
+            .appendTo('.aliquot_detail[identifier='+val.aq_aqid+']');
+
+            $(document.createElement('option'))
+            .attr('cid',val.c_cid)
+            .text(val.c_cname+" ("+val.c_temp+")")
+            .appendTo('.aliquot_detail[identifier='+val.aq_aqid+'] .container_selector');
 
                 // TODO: add tooltip to show container location
 
@@ -73,7 +70,7 @@ function create_aliquots(rid) {
                 .attr('field','aq_amount')
                 .attr('default_value','(qty)')
                 .val(val.aq_amount)
-                .appendTo('.aliquot_detail[aqid='+val.aq_aqid+']');
+                .appendTo('.aliquot_detail[identifier='+val.aq_aqid+']');
 
                 $(document.createElement('input'))
                 .attr('type','text')
@@ -83,7 +80,7 @@ function create_aliquots(rid) {
                 .attr('field','aq_conc')
                 .attr('default_value','(conc)')
                 .val(val.aq_conc)
-                .appendTo('.aliquot_detail[aqid='+val.aq_aqid+']');
+                .appendTo('.aliquot_detail[identifier='+val.aq_aqid+']');
 
                 $(document.createElement('input'))
                 .attr('type','text')
@@ -93,30 +90,30 @@ function create_aliquots(rid) {
                 .attr('field','aq_lot')
                 .attr('default_value','(lot/date)')
                 .val(val.aq_lot)
-                .appendTo('.aliquot_detail[aqid='+val.aq_aqid+']');
+                .appendTo('.aliquot_detail[identifier='+val.aq_aqid+']');
 
                 $(document.createElement('select'))
-                    .addClass('action_options')
-                    .appendTo('.aliquot_detail[aqid='+val.aq_aqid+']');
+                .addClass('action_options')
+                .appendTo('.aliquot_detail[identifier='+val.aq_aqid+']');
 
                     $(document.createElement('option'))
                     .text('options')
-                    .appendTo('.aliquot_detail[aqid='+val.aq_aqid+'] select');
+                    .appendTo('.aliquot_detail[identifier='+val.aq_aqid+'] .action_options');
 
-                    $(document.createElement('option'))
-                    .val('move')
-                    .text('move')
-                    .appendTo('.aliquot_detail[aqid='+val.aq_aqid+'] select');
+                    // $(document.createElement('option'))
+                    // .val('duplicate')
+                    // .text('duplicate')
+                    // .appendTo('.aliquot_detail[identifier='+val.aq_aqid+'] .action_options');
 
                     $(document.createElement('option'))
                     .val('delete')
                     .text('delete')
-                    .appendTo('.aliquot_detail[aqid='+val.aq_aqid+'] select');
+                    .appendTo('.aliquot_detail[identifier='+val.aq_aqid+'] .action_options');
 
-                    $(document.createElement('option'))
-                    .val('duplicate')
-                    .text('duplicate')
-                    .appendTo('.aliquot_detail[aqid='+val.aq_aqid+'] select');
+                    // $(document.createElement('option'))
+                    // .val('archive')
+                    // .text('archive')
+                    // .appendTo('.aliquot_detail[identifier='+val.aq_aqid+'] .action_options');
         });
 
         //now that you have all the aliquot information, insert default values and bind edit functions
@@ -137,6 +134,7 @@ function create_aliquots(rid) {
             });
 
             bind_aliquot_action();
+            populate_container_selectors();
     })
     .fail(function(){
         $(document.createElement('div'))
@@ -148,20 +146,21 @@ function create_aliquots(rid) {
 function width_adjust(this_item){
     var input_width = $(this_item).val().length;
     // alert(input_width);
-    input_width = (input_width+1 )*6;
+    input_width = (input_width+1 )*8;
     $(this_item).css('width',input_width);
 
     //TODO: add mechanism to balance column widths for all items at once
 }
 
-//bind functions to aliquot select pulldown-manu
+//bind functions to aliquot select pulldown-menu, this allows deletion (and duplication in the future)
 function bind_aliquot_action(){
 $('.action_options').change(function(){
-    var rid    = $('#side .reagent_div').attr('rid');
+    var rid    = $('#side .reagent_div').attr('identifier');
     var action = $(this).val();
-    var aqid   = $(this).closest('.aliquot_detail').attr('aqid');
+    var aqid   = $(this).closest('.table_id').attr('identifier');
 
-    if(action === "delete"){delete_aliquot(rid, aqid)}
+    if(action      === "delete"){delete_aliquot(rid, aqid)}
+    else if(action === "duplicate"){}
 })
 }
 
@@ -209,4 +208,54 @@ function delete_aliquot(rid, aqid){
 
     //refresh the aliqout info on this page
     create_aliquots(rid);
+}
+
+function populate_container_selectors(){
+
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: "utility/fetch_containers.php",
+        dataType: 'json'
+    })
+    .done(function(data){
+
+        if(data.rows > 0){
+
+            $('.aliquot_detail').each(function(){
+                //make an element for all fields
+
+                var current = $(this).find('.container_selector');
+                 $.each(data.containers, function(key, val) {
+
+                     //create an option entry for all available containers
+                     $(document.createElement('option'))
+                    .val(val.c_cid)
+                    .text(val.c_cname+" ("+val.c_temp+")")
+                    .appendTo(current);
+                })
+            });
+        }
+        else{
+            //TODO add error notice here
+        }
+    })
+    .fail(function(){
+        //TODO add error notice here
+        });
+
+    bind_container_selectors();
+}
+
+
+//bind functions to container pulldown-manu
+function bind_container_selectors(){
+$('.container_selector').change(function(){
+    var rid  = $('#side .reagent_div').attr('identifier');
+    var cid  = $(this).val();
+    var aqid = $(this).closest('.aliquot_detail').attr('identifier');
+
+    update_detail(cid, 'aq_cid', aqid, 'aliquot');
+
+})
 }

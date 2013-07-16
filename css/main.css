@@ -1,4 +1,4 @@
-/* 
+/*
     Document   : main
     Created on : April 14, 2013
     Author     : ciclistadan
@@ -6,17 +6,22 @@
 
 main stylesheet for layout and design
 
-initial inspiration from 
-http://creattica.com/css/pixelcraft/18968
-
 */
 
 
+/*
+http://www.colourlovers.com/pattern/637752/Paper_Sea
+rgb(79,142,149); 
+rgb(112,131,125);
+rgb(164,177,167);
+rgb(74,119,124);
+rgb(255,255,255); 
+*/
+
 body{
-    font-family:Courier New, monospace; 
-    font-size:14px; 
-    margin:20px; 
-    padding:0;}
+    font-family: 'Ubuntu', sans-serif;
+    font-size:10pt; 
+    }
 
 input, form, textarea
 h1, h2, h3, h4, h5, h6{margin:0; padding:0;}
@@ -28,77 +33,170 @@ h3{font-size:13px; border-bottom:solid 1px #DEDEDE; padding:4px 0; margin-bottom
 PAGE STRUCTURE
 ----------------------------------------------- */
 #container{
-    width:1024px; 
-    margin:auto auto;}
+    width:1024px;
+    margin:auto 50px;
+}
+
 #navbar{
-    background-color: tan;
-    width:auto; 
-    display:block; 
+    background-color: rgb(79,142,149);
+    width:auto;
+    display:block;
     height:32px;}
     #navbar a{heigth:28px; line-height:28px; padding:0 8px; display:inline;}
+
 #top{
-    background-color: gray;
-    width:100%; 
-    display:block; 
+    /*background-color: gray;*/
+    background-image:url('../images/COLOURlovers_Paper_Sea-bar.png');
+    width:100%;
+    display:block;
     height:75px;}
 #main{
     min-height: 400px;
-    width:100%; 
-    display:block; 
-    /*height:400px;*/
+    width:100%;
+    display:block;
+    /*background-color: red;*/
     }
 #bottom{
-    background-color: blue;
-    width:100%; 
-    display:block; 
-    height:100px;
+    background-image:url('../images/COLOURlovers_Paper_Sea-bar.png');
+    width:100%;
+    display:block;
+    height:75px;
     float:left;
 }
 #footer{
-    background-color: purple;
-    width:100%; 
-    display:block; 
+    background-color: rgb(79,142,149);
+    width:100%;
+    display:block;
     height:32px;
     float:left;
     }
 
-
-#content_container{
-    background-color: red;
-    width:50%; 
-    display:block; 
-    height:100%;
-    float:left;
-}
-#side{
-    background-color: teal;
-    float:left;
-    /*overflow: auto;*/
-    width:50%;
-}
-
-
-
-
-.r_rid, 
-.r_systematicname,
-.r_rating{
+/* -----------------------------------------------
+DYNAMIC
+----------------------------------------------- */
+.hidden{
     display:none;
 }
 
-.titlebar_value{
-    padding:2px 0 0 5px;
+.error{
+    background-color: red;
 }
-.reagent_detail{
-    height:25px;
+
+/* -----------------------------------------------
+SEARCH RESULTS
+----------------------------------------------- */
+
+#main .reagent_div{
+    width: 490px;
+    float:left;
+    white-space: nowrap;
+    overflow:hidden;
+    border-radius: 7px;
+    border-style:solid;
+    border-color:rgb(79,142,149);
+
+    padding:3px;
+    margin:3px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+/* -----------------------------------------------
+DETAILS and EDITING
+----------------------------------------------- */
+#side{
+    /*background-color: teal;*/
+    float:left;
+    width:100%;
+}
+
+#side .reagent_div{
+    width:999px;
+    cursor: default;
+}
+
+#side .titlebar_value{
+    text-align:center;
+    font-size: 18pt;
+    font-family: 'Kite One', sans-serif;
+    padding: 10px;
+}
+
+.reagent_details1{
+    height: 100%;
+}
+
+.reagent_details1{
+    width: 50%;
+    float:left;
+}
+.reagent_details2,
+.aliquot_titlebar,
+.aliquot_details{
+    width: 50%;
+    float:right;
+}
+
+.aliquot_titlebar,
+.aliquot_details{
+    clear:right;
+}
+
+textarea, 
+input,
+.container_selector,
+.action_options
+{
+    font-family: 'Kite One', cursive;
+    font-size:10pt;
+    padding: 0.6em;
+    border:none;
+    background-color: rgb(164,177,167);
+    opacity:0.5;
+}
+
+textarea{
+    line-height: 14pt;
+    overflow-y: hidden; /* fixes scrollbar flash - kudos to @brettjonesdev */
+    
+}
+
+input{
+    line-height: 10pt;
+ }
+
+.small_field textarea{
+    resize:vertical;
+    /*outline:none;*/
+/*    min-width: 270px;*/
     width: 100%;
-    float: left;
+    height: 8px;
+    min-height: 20px;
 }
+
+.large_field textarea{
+    resize:vertical;
+    width: 100%;
+    height: 8px;
+    min-height: 50px;
+}
+
+
+
+ .search_input{
+    background-color: white;
+    opacity: 0.9;
+    border-radius: 7px;
+    margin:5px;
+    box-shadow: 1px 1px 5px #888888;
+ }
 
 .detail_name{
     padding: 5px 0 0 1px;
     float:left;
-    width:35%;
+    width:30%;
     height: 19px;
 }
 
@@ -106,29 +204,50 @@ PAGE STRUCTURE
 .detail_value{
     float:left;
     width:60%;
-    height: 24px;
-}
-
-textarea{
-    height: 24px;
-    width:100%;
-    resize:none;
 
 }
 
-.hidden{
-    display: none;
-}
+/*.container_selector,
+.action_options{
+    padding:3px;
+    margin:3px;
+}*/
 
-.detail_value > textarea{
-    /*border:none;*/
+.aliquot_detail{
+    width: 96%;
+    float:left;
+    white-space: nowrap;
+    overflow:hidden;
+    border-radius: 7px;
+    border-style:solid;
+    border-color:rgb(79,142,149);
+
+    padding:3px;
+    margin:3px;
+
+    cursor: pointer;
+
+    font-weight: bold;
 }
 
 .width_adjust{
-    min-width: 50px;
+    min-width: 20px;
     max-width:100px;
 }
 
+.page_navigator{
+    cursor:pointer;
+    margin-left: 5px;
+}
+
+.user_panel{
+    float:right;
+}
+
+fieldset label,
+fieldset input{
+    display:block;  
+}
 
 /*notes*/
 /*margin: 0 auto; will set no top and bottom margin and center left/right*/

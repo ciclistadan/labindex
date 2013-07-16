@@ -1,29 +1,47 @@
+
 function refresh_search(keyword, page) {
 
     // TODO    disable search box while function is running, add loading gifs
+
+    //remove existing details
     $("#content_container").children().remove();
     $('#side').children().remove();
     $('.page_navigator').remove();
 
+    var dataString = "";
 
-    //search parameters
-    var url = "";
-    var dataString = 'keyword='+ keyword;
-    dataString += '&callback=?';
-    if(page > 0){
-        dataString += '&page='+ page;
+    //create a simple fuzzy search from the website search
+    if(keyword.length > 2){
+        dataString += 'keyword='+ keyword;
+        dataString += '&'+query_string;
+        dataString += '&callback=?';
+        if(page > 0){
+            dataString += '&page='+ page;
+        }
     }
+    //TODO important, add ability to remove url-encoded query for fresh search
+    //if you don't have an appropriate keyword, check for a url-encoded query
+    else if (keyword.length < 3 && query_string.length > 0){
+        dataString += query_string;
+        dataString  += '&callback=?';
+        if(page > 0){
+            dataString += '&page='+ page;
+        }
+    }
+    else{return;}
+
     $.ajax({
         url: "utility/fetch_reagents_list.php",
         dataType: 'json',
         data: dataString,
         success: function(data){
+
             if(data.rows > 0){
                 $.each(data.reagents, function(key, val) {
-                    //create entry container div for each reagent
+                    //create .reagent_div container div for each reagent
                     $(document.createElement('div'))
                     .attr('id', val.r_rid)
-                    .attr('rid', val.r_rid)
+                    .attr('identifier', val.r_rid)
                     .attr('type', val.r_reagent_type)
                     .attr('table', 'reagent_detail')
                     .addClass('reagent_div')
@@ -39,7 +57,12 @@ function refresh_search(keyword, page) {
                     .addClass('titlebar_value')
                     .appendTo("#"+val.r_rid+" > .reagent_titlebar");
                 });
-// TODO automatically launch if results return a single totalRows
+                // TODO automatically launch if results return a single totalRows
+
+                $(document.createElement('span'))
+                    .text('page: ')
+                    .addClass("page_navigator")
+                    .appendTo('#top');
 
                 for (var i = 1; i <= data.pages; i++) {
                     var current_search = search_input;
@@ -65,11 +88,21 @@ function refresh_search(keyword, page) {
                 $(document.createElement('div')).text("No reagents were found for that search").appendTo("#content_container");
             }
 
-            //put placeholder into #side
+            //create a placeholder in the #side
             $(document.createElement('div'))
-                    .text('--->')
-                    .addClass('placeholder')
-                    .appendTo('#side');
+            .addClass('reagent_div')
+            .addClass('placeholder')
+            .appendTo('#side');
+
+            $(document.createElement('div'))
+            .addClass('reagent_titlebar')
+            .appendTo('#side .reagent_div');
+
+            $(document.createElement('div'))
+            .addClass('reagent_value')
+            .text('--->')
+            .appendTo('#side .reagent_titlebar');
+
 
         },
         error: function(){
@@ -79,3 +112,35 @@ function refresh_search(keyword, page) {
         }
     });
 }
+
+
+function new_reagent(type){
+    var status;
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: "utility/insert_new_reagent.php",
+        dataType: 'json',
+        data: {
+            r_reagent_type:type
+        }
+    })
+    //TODO no real reason why I need to do this as AJAX, submit a form to insert_new_reagent.php and use header('Location: ../index.php?r_rid=75'); 
+    .done(function( data ) {
+        if(data.rows == 1){
+            var pathname = window.location.pathname;
+            var new_rid  = data.new_rid;
+            alert(pathname);
+            window.location.href = pathname+"?r_rid="+new_rid;
+       }
+       else{ status = 0; }
+   })
+    .fail(function(){status = 0;});
+}
+
+
+
+
+
+
+
