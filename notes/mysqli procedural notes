@@ -1,0 +1,35 @@
+
+database2.php
+<?php
+$link = mysqli_connect("localhost", "my_user", "my_password", "world");
+
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+?>
+
+
+<?
+//perform a SELECT
+
+$string = mysqli_real_escape_string($link, $string);
+
+$query = "SELECT Name, CountryCode FROM City ORDER by ID DESC LIMIT 50,5";
+$result = mysqli_query($link, $query)
+if (mysqli_affected_rows($link)>0) {
+
+    /* fetch associative array */
+    while ($row = mysqli_fetch_assoc($result)) {
+        printf ("%s (%s)\n", $row["Name"], $row["CountryCode"]);
+    }
+
+    /* free result set */
+    mysqli_free_result($result);
+}
+
+/* close connection */
+mysqli_close($link);
+?>
+

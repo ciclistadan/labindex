@@ -1,0 +1,27 @@
+.support{
+	position: absolute;
+    width:250px;
+	/*background-color: red;*/
+	top:125px;
+	right:40px;
+	margin:0;
+}
+
+.support_title{
+	padding-left: 10px;
+}
+
+.support_from{
+	height:25px;
+	width:100%;
+}
+
+.support_message{
+	height:150px;
+	resize:vertical;
+	width:100%;
+}
+.support_submit{
+	cursor:pointer;
+	width:266px;
+}
