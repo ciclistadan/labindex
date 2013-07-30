@@ -1,4 +1,3 @@
-
 function bind_titlebar_functions(single_element) {
     var selector;
     //if an elmenet is used as an argument, only bind that, otherwise bind all .reagent_titlebar classes
@@ -14,8 +13,7 @@ function bind_titlebar_functions(single_element) {
     $(selector).click(function swap_reagents(){
 
         // prevent detail requests without authentication
-        // this is not a 'real' security checkpoint, just prevents error messages
-
+        // this is not a 'real' security checkpoint, just prevents error messages when the server checks your credentials
         if($('.verified').length == 1){
 
             //if placeholder is in the #side container
@@ -32,22 +30,28 @@ function bind_titlebar_functions(single_element) {
                 $('.placeholder').first().replaceWith($('#side').find('.reagent_div')).appendTo('#side');
                 $(this).closest('.reagent_div').replaceWith($('#side').find('.placeholder')).appendTo($('#side'));
             }
-                type = $(this).closest('.table_id').attr('type');
-                rid = $(this).closest('.table_id').attr('identifier');
+            type = $(this).closest('.table_id').attr('type');
+            rid = $(this).closest('.table_id').attr('identifier');
 
-                create_fields(type,rid);
-                create_aliquots(rid);
+            create_fields(type,rid);
+            populate_details(rid);
+            create_aliquots(rid);
+
+            //resize the textareas to fit actual text
+            $('#side textarea').keyup(function (){
+                $(this).height( 0 );
+                $(this).height( this.scrollHeight );
+            });
+            $('#side textarea').keyup();
+
         }    
         else{
             alert("You are not properly authenticated to view reagent details");
         }
-
-
     });
 }
 
 function create_fields(type,id) {
-
     $.ajax({
         async: false,
         type: "POST",
@@ -95,12 +99,6 @@ function create_fields(type,id) {
                 bind_edit_functions("#"+id+" [field="+val.field_attr_column_name+"] .detail_value > textarea");
             });
 
-           //populate all field values individualy
-           //TODO change this to a bulk ajax request similar to above
-           $("#"+id).find('textarea').each(function (){
-                var field = $(this).closest('.reagent_detail').attr('field');
-               $(this).val(get_detail_value(field, id));
-           });
         }
         else{
             $(document.createElement('div')).text("no results returned").appendTo("#"+id);
@@ -108,38 +106,31 @@ function create_fields(type,id) {
     })
     .fail(function(){
         $(document.createElement('div')).text("there was a problem loading these details (json return error)").appendTo("#"+id);
-        });
-
-    //resize the value textareas
-        $('#side textarea').keyup(function (){
-            $(this).height( 0 );
-            $(this).height( this.scrollHeight );
-        });
-        $('#side textarea').keyup();
-
-
+            });
 }
 
-function get_detail_value(field, id){
-    var retval = 'pre';
+
+function populate_details(id){
     $.ajax({
         async: false,
         type: "POST",
-        url: "utility/fetch_field_value.php",
+        url: "utility/fetch_field_values.php",
         dataType: 'json',
-        data: {
-        r_rid: id,
-        r_field: field
-        },
+        data: { r_rid: id },
         success: function(data){
             if(data.rows == 1){
-                retval = data.return_value;
+                $.each(data.details, function(key, val) {
+                    $('.reagent_detail[field='+key+']').find('.detail_value textarea').val(val);
+                });
             }
-            else{ retval =  'blank'; }
+            else{
+                // TODO error handling
+            }
         },
-        error: function(){ retval = 'error'; }
+        error: function(){ 
+            // TODO error handling
+        }
     });
-    return retval;
 }
 
 // TODO: in the middle of editing this function,
