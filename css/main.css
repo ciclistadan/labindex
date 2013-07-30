@@ -34,7 +34,7 @@ PAGE STRUCTURE
 ----------------------------------------------- */
 #container{
     width:1024px;
-    margin:auto 50px;
+    margin:auto;
 }
 
 #navbar{
@@ -42,14 +42,21 @@ PAGE STRUCTURE
     width:auto;
     display:block;
     height:32px;}
-    #navbar a{heigth:28px; line-height:28px; padding:0 8px; display:inline;}
+
+#navbar a{
+    line-height:28px; 
+    padding:0 8px; 
+    display:inline;
+}
 
 #top{
     /*background-color: gray;*/
     background-image:url('../images/COLOURlovers_Paper_Sea-bar.png');
     width:100%;
     display:block;
-    height:75px;}
+    height:75px;
+}
+
 #main{
     min-height: 400px;
     width:100%;
@@ -245,10 +252,15 @@ input{
 }
 
 fieldset label,
+fieldset textarea,
 fieldset input{
     display:block;  
+    width:90%;
 }
 
+.dialog-box{
+    width:400px;
+}
 /*notes*/
 /*margin: 0 auto; will set no top and bottom margin and center left/right*/
 

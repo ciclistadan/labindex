@@ -68,6 +68,14 @@
             new_reagent(type);
         });
 
+$( "#dialog-locations" ).dialog({ 
+    autoOpen: false,
+    width: 450
+     });
+$( "#opener" ).click(function() {
+    $( "#dialog-locations" ).dialog( "open" );
+});
+
     });
 
 
@@ -106,8 +114,8 @@ $(function() {
     }
     $( "#dialog-form" ).dialog({
         autoOpen: false,
-        height: 300,
-        width: 350,
+        // height: 300,
+        width: 450,
         modal: true,
         buttons: {
             "Email comments": function() {
@@ -130,7 +138,11 @@ if ( bValid ) {
             message: message.val()
         }
     })
-    .done(function(data){})
+    .done(function(data){
+        $('.email_comments').animate({
+            backgroundColor: "green"});
+            
+    })
     .fail(function(){});
 
     $( this ).dialog( "close" );
@@ -161,7 +173,7 @@ close: function() {
     <div id="container">
         <div id="navbar">
             <a href="http://connorlab.com/">Connor Lab</a>
-            <a href="http://localhost/labindex/index.php">LabIndex Database</a>
+            <a href="http://connorlab.com/labindex/index.php">LabIndex Database</a>
             <select class="new_reagent_button">
                 <option val="default">add a new reagent</>
                 <option val="antibody">antibody</>
@@ -170,6 +182,7 @@ close: function() {
                 <option val="supply">supply</>
             </select>
             <button id="email_comments">Email Comments</button>
+            <button id="opener">Quick Locations</button>
 
             <span class="user_panel">
             <? if($_SESSION['userid']){
@@ -193,11 +206,13 @@ close: function() {
                 <div id:"col2"></div>
             </div>
         </div>
-        <div id="bottom"></div>
+        <div id="bottom">
+            <a href="http://localhost/labindex/locations.pdf">Location Details and Maps PDF</a>
+        </div>
         <div id="footer"></div>
     </div>
 
-    <div id="dialog-form" title="Email Comments">
+    <div id="dialog-form" class="dialog-box" title="Email Comments">
         <p class="validateTips">All form fields are required.</p>
         <form>
             <fieldset>
@@ -206,10 +221,31 @@ close: function() {
                 <label for="email">Email</label>
                 <input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" />
                 <label for="message">Comments</label>
-                <input type="text" name="message" id="message" value="" class="text ui-widget-content ui-corner-all" />
+                <textarea type="text" name="message" id="message" value="" class="text ui-widget-content ui-corner-all" /></textarea>
             </fieldset>
         </form>
     </div>
 
+    <div id="dialog-locations" class="dialog-box" title="Reagent Locations">
+        <ul>
+            <li>Zone A R507: Nacho’s Desk</li>
+            <li>Zone B R507: Natalia’s Desk</li>
+            <li>Zone C R507: Judy’s old Desk</li>
+            <li>Zone D R507: Kassi’s old Desk</li>
+            <li>Zone E R509/Splinter Cell: Claire-Marie’s Desk</li>
+            <li>Zone F R509/Splinter Cell: Dan’s Desk</li>
+            <li>Zone G R507: Sink opposite microfuges</li>
+            <li>CN-A R507 Chemical Nook left side</li>
+            <li>CN-B R507 Chemical Nook center</li>
+            <li>CN-C R507 Chemical Nook right side</li>
+            <li>TCR-A R507 Tissue Culture Room left </li>
+            <li>TCR-B R507 Tissue Culture Room center</li>
+            <li>TCR-C R507 Tissue Culture Room right</li>
+            <li>TCL-A L503 Tissue Culture Room left</li>
+            <li>TCL-B L503 Tissue Culture Room center</li>
+            <li>TCL-C L503 Tissue Culture Room right</li>
+            <li>TCL-D L503 Tissue Culture Room sink</li>
+        </ul>
+    </div>
 
 </body>

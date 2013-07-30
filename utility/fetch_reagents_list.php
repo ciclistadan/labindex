@@ -55,7 +55,8 @@ $query1 = $sql_COUNT . $sql_FROM . $sql_WHERE;
 
 // echo $query1;
 // perform a query to retreive the total result1 count without limits
-if($result1 = mysqli_query($link, $query1) ){
+
+if ($result1 = mysqli_query($link, $query1)) {
     //TODO incorporate check for rows>0
     // if total query count returns something continue, else callback rows:0
 
@@ -91,7 +92,9 @@ if($result1 = mysqli_query($link, $query1) ){
         $query2 = $sql_SELECT . $sql_FROM . $sql_WHERE . $sql_LIMIT;
 
 // print($query2);
-        if ($result2 = mysqli_query($link, $query2)) {
+        //fetch the desired set of reagent lines
+        $result2 = mysqli_query($link, $query2);
+        if (mysqli_affected_rows($link)>0) {
                 //TODO incorporate check for rows>0
             //make an array of json objects
             $json .= ", rows:'" . mysqli_affected_rows($link) . "'";
@@ -122,7 +125,7 @@ if($result1 = mysqli_query($link, $query1) ){
 }
 else{
     //no results found
-    $json = "({rows:'-1', query:'".$query1."'})";
+    $json = "({rows:'-1'})";
 }
 
 //return JSON, the variable $_GET["callback"] originally sent a "?"

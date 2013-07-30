@@ -7,7 +7,7 @@ if(isset($_SESSION['userid'])){
     if (isset($_POST['r_reagent_type'])) {
 
         $r_reagent_type    = mysqli_real_escape_string($link, trim($_POST['r_reagent_type']));
-        $query   = "INSERT INTO labindex.reagents SET  r_reagent_type = '".$r_reagent_type."', r_systematicname='new ".$r_reagent_type."'";
+        $query   = "INSERT INTO reagents SET  r_reagent_type = '".$r_reagent_type."', r_systematicname='new ".$r_reagent_type."'";
 
     //make the insert query
         mysqli_query($link, $query);

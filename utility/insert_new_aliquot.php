@@ -7,7 +7,7 @@ if(isset($_SESSION['userid'])){
     if (isset($_POST['aq_rid'])) {
 
         $aq_rid    = mysqli_real_escape_string($link, trim($_POST['aq_rid']));
-        $request   = "INSERT INTO labindex.aliquots SET aq_rid = '".$aq_rid."'";
+        $request   = "INSERT INTO aliquots SET aq_rid = '".$aq_rid."'";
 
     //make the insert request
         mysqli_query($link, $request);

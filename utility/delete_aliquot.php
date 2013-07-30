@@ -7,7 +7,7 @@ if(isset($_SESSION['userid'])){
     if (isset($_POST['aq_aqid'])) {
 
         $aq_aqid    = mysqli_real_escape_string($link, trim($_POST['aq_aqid']));
-        $request   = "DELETE FROM labindex.aliquots WHERE aliquots.aq_aqid = ".$aq_aqid;
+        $request   = "DELETE FROM aliquots WHERE aliquots.aq_aqid = ".$aq_aqid;
 
     //make the delete request
         mysqli_query($link, $request);

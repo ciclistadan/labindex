@@ -66,7 +66,7 @@ if (!$response){
     }
     else{
           //not a valid user, request addition to validation table
-      echo '{"stat": "you are not a valid user, ask Dan to add you to the list"}';
+      echo '{"stat": "you are not registered yet, ask Dan to add you to the list"}';
       
     }
 

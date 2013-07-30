@@ -130,7 +130,7 @@ function new_reagent(type){
         if(data.rows == 1){
             var pathname = window.location.pathname;
             var new_rid  = data.new_rid;
-            alert(pathname);
+            // alert(pathname);
             window.location.href = pathname+"?r_rid="+new_rid;
        }
        else{ status = 0; }
