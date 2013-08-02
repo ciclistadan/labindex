@@ -55,11 +55,13 @@ function janrainWidgetOnload() {
                     .attr('href','utility/destroy_session.php')
                     .appendTo('.user_panel');
 
-            }else{alert(res.stat);}
+            }else{ 
+                // TODO error handling
+            }
         })
         .fail(function(){
             janrain.engage.signin.modal.close();
-            alert(res.stat);
+            // TODO error handling
         });
     });
 }

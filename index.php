@@ -43,6 +43,7 @@
             $("#search_input").attr("value",keyword);
         }
 
+        //run the function onload in case there are any url search parameters
         refresh_search(keyword);
 
         // TODO: fix method for removing keyword, add clear "x" at and or search field
@@ -51,14 +52,23 @@
             $(this).val("");
         });
 
-        // capture dynamic search function input
-        $("#search_input").keyup(function(){
-            var search_input = $(this).val();
-            keyword = search_input;
-            if(search_input.length>2){
+        // capture dynamic search function input, verify length and prevent multiple searches by forcing a delay
+        
+        var delay = (function(){
+          var timer = 0;
+          return function(callback, ms){
+            clearTimeout (timer);
+            timer = setTimeout(callback, ms);
+            };
+        })();
+
+        $('#search_input').keyup(function() {
+            delay(function(){
+                var search_input = $('#search_input').val();
                 refresh_search(search_input);
-            }
+            }, 500 );
         });
+
 
         // assign page control functions
         <?php $_SESSION['qty'] = 10; ?>
