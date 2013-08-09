@@ -28,6 +28,17 @@ foreach ($fields as $field){
     }
 }
 
+// TODO add omnosearch
+// select r_rid,r_systematicname from reagents, aliquots, containers 
+// where reagents.r_rid = aliquots.aq_rid
+// AND containers.c_cid = aliquots.aq_cid  
+// AND c_cid like '%4%'
+
+
+
+
+
+
 //combine the keyword and filter WHERE statements
 if(strlen($sql_keyword_WHERE) > 0 && strlen($sql_filter_WHERE) > 0){
     $sql_WHERE = "WHERE (".substr(trim($sql_filter_WHERE),0,-3)." AND ".$sql_keyword_WHERE.")";

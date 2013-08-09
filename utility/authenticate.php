@@ -59,6 +59,9 @@ if (!$response){
       $row = mysqli_fetch_assoc($result);
       $_SESSION['userid'] = $row['p_userid'];
       $_SESSION['name'] = $obj['profile']['name']['givenName'];
+      $_SESSION['fullname'] = $obj['profile']['displayName'];
+      $_SESSION['useremail'] = $obj['profile']['email'];
+
       echo $response;
 
             //TODO store user information in our database for use on the lab website

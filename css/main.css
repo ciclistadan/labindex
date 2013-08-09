@@ -34,7 +34,7 @@ PAGE STRUCTURE
 ----------------------------------------------- */
 #container{
     width:1024px;
-    margin:auto;
+    margin:25px;
 }
 
 #navbar{
@@ -260,6 +260,13 @@ fieldset input{
 
 .dialog-box{
     width:400px;
+}
+
+.updates{
+    width:300px;
+left:1075px;
+top:100px;
+position: absolute;
 }
 /*notes*/
 /*margin: 0 auto; will set no top and bottom margin and center left/right*/

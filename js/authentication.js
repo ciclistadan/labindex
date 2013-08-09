@@ -42,14 +42,20 @@ function janrainWidgetOnload() {
         })
         .done(function(res){
             janrain.engage.signin.modal.close();
+
+            //authentication has occurred properly
             if(res.stat==='ok'){
                 $('#side').addClass('verified');
                 $('.janrainEngage').remove();
 
+                //populate email form with authorized credentials
+                $('#name').attr('value',res.profile['displayName']);
+                $('#email').val(res.profile['email']);
+
+                //update user panel in navbar
                 $(document.createElement('a'))
                     .text('Hi '+res.profile['name']['givenName'])
                     .appendTo('.user_panel');
-
                 $(document.createElement('a'))
                     .text('(logout)')
                     .attr('href','utility/destroy_session.php')
