@@ -29,73 +29,32 @@
 
 
  <script type="text/javascript">
-    //Global Variables
+
+    //the QUERY_STRING is the string of text after the ? in the url
     var query_string = '<? echo $_SERVER['QUERY_STRING'] ?>';
 
 
     $(function(){
-        //get keyword from url
-        var keyword = "<?php
-        if (isset($_GET["search"])) {
-            $keyword = $_GET["search"];
-            echo $keyword;
-        } else { echo ""; }
-        ?>";
 
-        // insert keyword into search textbox and call the search
-        if(keyword.length > 0){
-            $("#search_input").attr("value",keyword);
-        }
-
-        //run the function onload in case there are any url search parameters
-        refresh_search(keyword);
-
-        // TODO: fix method for removing keyword, add clear "x" at and or search field
-        // clear search textbox on focus
-        $("#search_input").focus(function(){
-            $(this).val("");
-        });
-
-        // capture dynamic search function input, verify length and prevent multiple searches by forcing a delay
-        
-        var delay = (function(){
-          var timer = 0;
-          return function(callback, ms){
-            clearTimeout (timer);
-            timer = setTimeout(callback, ms);
-            };
-        })();
-
-        $('#search_input').keyup(function() {
-            delay(function(){
-                var search_input = $('#search_input').val();
-                refresh_search(search_input);
-            }, 500 );
-        });
-
-
+        $('.button').button();
         // assign page control functions
-        <?php $_SESSION['qty'] = 10; ?>
+        <?php $_SESSION['qty'] = 10; ?>      
 
         $('.new_reagent_button').change(function(){
             var type = $(this).val();
             new_reagent(type);
         });
 
-$( "#dialog-locations" ).dialog({ 
-    autoOpen: false,
-    width: 450
-     });
-$( "#opener" ).click(function() {
-    $( "#quick-locations" ).dialog( "open" );
-});
+        $( "#quick-locations" ).dialog({ 
+            autoOpen: false,
+            width: 450
+        });
+
+        $( "#opener" ).click(function() {
+            $( "#quick-locations" ).dialog( "open" );
+        });
 
     });
-
-
-
-
-
 
     </script>
 </head>
@@ -114,6 +73,7 @@ $( "#opener" ).click(function() {
             </select>
             <button id="email_comments">Email Comments</button>
             <button id="opener">Quick Locations</button>
+            
 
             <span class="user_panel">
             <? if($_SESSION['userid']){
@@ -127,8 +87,17 @@ $( "#opener" ).click(function() {
             </span>
         </div>
         <div id="top">
-            <div id="search"><input id="search_input" class="search_input" type="text" value="search"></div>
-            <div id="intro"></div>
+            <form class="search_form">
+                <div class="search_row">
+                    <input name="search[0][text]" class="search_input" type="text" value="antibody">
+                    <select name="search[0][field]" class="search_field" type="text" >
+                        <?php include './utility/search_options.php'; ?>
+                    </select>
+                    <div class="add_search_row button ui-icon ui-icon-plus">add</div>
+                </div>
+
+            </form>
+
         </div>
         <div id="main">
             <div id="content_container"></div>
@@ -154,6 +123,7 @@ $( "#opener" ).click(function() {
             <li>make sure you search several possibile names before adding a new reagent</li>
         </br>
         Recent Updates
+            <li>20130812</li>advanced search by using multiple filtering criteria
             <li>20130803</li>added the container 'viruses from don' to the database
             <li>20130801</li>added delay in search function to prevent duplicates
             <li>20130801</li>website goes live on <a href="www.connorlab.com/labindex/">connorlab.com</a>!

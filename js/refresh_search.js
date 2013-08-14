@@ -1,39 +1,110 @@
+    $(function(){
 
-function refresh_search(keyword, page) {
+        bind_search_functions();
+        refresh_search();
+});
+
+//TODO, multiple click functions are being bound to a single search field,
+function bind_search_functions(){
+
+        // capture dynamic search function input, verify length and prevent multiple searches by forcing a delay
+    var delay = (function(){
+        var timer = 0;
+        return function(callback, ms){
+            clearTimeout (timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    $('.search_input').unbind()
+    // .focus(function(){
+    //     $(this).val("");
+    // })
+    .keyup(function() {
+        delay(function(){
+            refresh_search();
+        }, 500 );
+    });
+
+    $('.search_field').unbind().change(function(){
+        refresh_search();
+    });
+
+    $('.add_search_row').remove();
+    $('.remove_search_row').remove();
+
+    $('.search_row:not(:first)').each(function(){
+        remove_search_row_button($(this));
+    });
+
+    $('.search_row:last').each(function(){
+        add_search_row_button($(this));
+    });
+
+
+
+
+}
+
+function add_search_row_button(search_row){
+
+    $(document.createElement('div'))
+        .addClass('add_search_row button ui-icon ui-icon-plus')
+        .click(function(){
+            $(this).closest('.search_row').clone().appendTo('.search_form');
+            bind_search_functions();
+            $('.search_input:last').val('').focus();
+        })
+        .button()
+        .appendTo(search_row);
+    
+    rename_search_rows();
+}
+
+function remove_search_row_button(search_row){
+
+    $(document.createElement('div'))
+        .addClass('remove_search_row button ui-icon ui-icon-minus')
+        .click(function(){
+            $(this).closest('.search_row').remove();
+            bind_search_functions();
+            refresh_search();
+        })
+        .button()
+        .appendTo(search_row);
+}
+
+function rename_search_rows(){
+    $('.search_row').each(function(){
+        var row = $(this).index();
+        $(this).find('.search_input').attr('name','search['+row+'][text]');
+        $(this).find('.search_field').attr('name','search['+row+'][field]');
+    });
+}
+    
+
+    function refresh_search(page) {
 
     // TODO    disable search box while function is running, add loading gifs
-
+    var newpage = page;
     //remove existing details
     $("#content_container").children().remove();
     $('#side').children().remove();
-    $('.page_navigator').remove();
 
-    var dataString = "";
-
-    //create a simple fuzzy search from the website search
-    if(keyword.length > 2){
-        dataString += 'keyword='+ keyword;
-        dataString += '&'+query_string;
-        dataString += '&callback=?';
-        if(page > 0){
-            dataString += '&page='+ page;
-        }
+    //capture search terms and fields into an ajax datastring
+    var encoded = $('.search_form').serializeArray();
+    // console.log(encoded);
+    if(newpage > 0){
+        encoded.push({"name":"page","value":newpage});
     }
-    //TODO important, add ability to remove url-encoded query for fresh search
-    //if you don't have an appropriate keyword, check for a url-encoded query
-    else if (keyword.length < 3 && query_string.length > 0){
-        dataString += query_string;
-        dataString  += '&callback=?';
-        if(page > 0){
-            dataString += '&page='+ page;
-        }
-    }
-    else{return;}
+    // console.log(encoded);
 
     $.ajax({
         url: "utility/fetch_reagents_list.php",
+        type: 'POST',
+        data: encoded,
+        //add ability to specifiy page number
         dataType: 'json',
-        data: dataString,
         success: function(data){
 
             if(data.rows > 0){
@@ -59,33 +130,51 @@ function refresh_search(keyword, page) {
                 });
                 // TODO automatically launch if results return a single totalRows
 
-                $(document.createElement('span'))
-                    .text('page: ')
-                    .addClass("page_navigator")
-                    .appendTo('#top');
-
-                for (var i = 1; i <= data.pages; i++) {
-                    var current_search = search_input;
-                    var current_page   = i;
-                    $(document.createElement('span'))
-                    .text(i)
-                    .attr("value",i)
-                    .addClass("page_navigator")
-                    .click(function(){
-                        var j = $(this).attr("value");
-                        var search_input = $("#search_input").val();
-                        if(search_input.length > 2){
-                            refresh_search(search_input, j);
-                        }
-                    })
-                    .appendTo("#top");
-                }
-                //highlight the current page and create 'next'/'prev' buttons
-                $(".page_navigator[value="+data.page+"]").css("text-decoration", "underline");
                 bind_titlebar_functions();
+
+
+
             }
             else{
                 $(document.createElement('div')).text("No reagents were found for that search").appendTo("#content_container");
+            }
+
+            //add page indicator and next page button 
+            if(parseInt(data.pages) > 1){
+
+                //next page button
+                if(parseInt(data.page) < parseInt(data.pages)){
+                    $(document.createElement('span'))
+                    .text('>')
+                    .button()
+                    .css('float','right')
+                    .click(function(){
+                        refresh_search(parseInt(data.page)+1);
+                    })
+                    .appendTo("#content_container");
+                }
+                //add an indicator
+                $(document.createElement('span'))
+                .text('(page '+data.page+' of '+data.pages+')')
+                .button()
+                .css('float','right')
+                .appendTo("#content_container");                
+
+
+
+                //prev page button
+                if(parseInt(data.page) >1 ){
+                    $(document.createElement('span'))
+                    .text('<')
+                    .button()
+                    .css('float','right')
+                    .click(function(){
+                        refresh_search(parseInt(data.page)-1);
+                    })
+                    .appendTo("#content_container");
+                }
+
+
             }
 
             //create a placeholder in the #side
@@ -132,11 +221,12 @@ function new_reagent(type){
             var new_rid  = data.new_rid;
             // alert(pathname);
             window.location.href = pathname+"?r_rid="+new_rid;
-       }
-       else{ status = 0; }
-   })
+        }
+        else{ status = 0; }
+    })
     .fail(function(){status = 0;});
 }
+
 
 
 

@@ -17,7 +17,7 @@ if (mysqli_connect_errno()) {
 $string = mysqli_real_escape_string($link, $string);
 
 $query = "SELECT Name, CountryCode FROM City ORDER by ID DESC LIMIT 50,5";
-$result = mysqli_query($link, $query)
+$result = mysqli_query($link, $query);
 if (mysqli_affected_rows($link)>0) {
 
     /* fetch associative array */
@@ -32,4 +32,16 @@ if (mysqli_affected_rows($link)>0) {
 /* close connection */
 mysqli_close($link);
 ?>
+
+
+// TODO add omnisearch
+select r_rid,r_systematicname from reagents, aliquots, containers 
+where reagents.r_rid = aliquots.aq_rid
+AND containers.c_cid = aliquots.aq_cid  
+
+AND c_cid like '%4%'
+  
+AND r_systematicname like '%v%'
+
+AND r_reagent_type like '%virus%'
 

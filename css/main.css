@@ -54,7 +54,7 @@ PAGE STRUCTURE
     background-image:url('../images/COLOURlovers_Paper_Sea-bar.png');
     width:100%;
     display:block;
-    height:75px;
+    /*height:75px;*/
 }
 
 #main{
@@ -192,7 +192,8 @@ input{
 
 
 
- .search_input{
+ .search_input,
+ .search_field{
     background-color: white;
     opacity: 0.9;
     border-radius: 7px;
