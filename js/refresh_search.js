@@ -1,13 +1,11 @@
-    $(function(){
-
-        bind_search_functions();
-        refresh_search();
+$(function(){
+    bind_search_functions();
+    refresh_search();
 });
 
-//TODO, multiple click functions are being bound to a single search field,
 function bind_search_functions(){
-
-        // capture dynamic search function input, verify length and prevent multiple searches by forcing a delay
+    
+    // capture dynamic search function input, verify length and prevent multiple searches by forcing a delay
     var delay = (function(){
         var timer = 0;
         return function(callback, ms){
@@ -17,13 +15,14 @@ function bind_search_functions(){
     })();
 
     $('.search_input').unbind()
-    // .focus(function(){
-    //     $(this).val("");
-    // })
     .keyup(function() {
         delay(function(){
             refresh_search();
         }, 500 );
+    })
+    //select the text withing a search window when it is focused on
+    .focus(function(){
+        $(this).select();
     });
 
     $('.search_field').unbind().change(function(){
@@ -82,8 +81,7 @@ function rename_search_rows(){
     });
 }
     
-
-    function refresh_search(page) {
+function refresh_search(page) {
 
     // TODO    disable search box while function is running, add loading gifs
     var newpage = page;
@@ -131,25 +129,22 @@ function rename_search_rows(){
                 // TODO automatically launch if results return a single totalRows
 
                 bind_titlebar_functions();
-
-
-
             }
             else{
                 $(document.createElement('div')).text("No reagents were found for that search").appendTo("#content_container");
             }
 
             //add page indicator and next page button 
-            if(parseInt(data.pages) > 1){
+            if(parseInt(data.pages,10) > 1){
 
                 //next page button
-                if(parseInt(data.page) < parseInt(data.pages)){
+                if(parseInt(data.page,10) < parseInt(data.pages,10)){
                     $(document.createElement('span'))
                     .text('>')
                     .button()
                     .css('float','right')
                     .click(function(){
-                        refresh_search(parseInt(data.page)+1);
+                        refresh_search(parseInt(data.page,10)+1);
                     })
                     .appendTo("#content_container");
                 }
@@ -158,23 +153,19 @@ function rename_search_rows(){
                 .text('(page '+data.page+' of '+data.pages+')')
                 .button()
                 .css('float','right')
-                .appendTo("#content_container");                
-
-
+                .appendTo("#content_container");
 
                 //prev page button
-                if(parseInt(data.page) >1 ){
+                if(parseInt(data.page,10) >1 ){
                     $(document.createElement('span'))
                     .text('<')
                     .button()
                     .css('float','right')
                     .click(function(){
-                        refresh_search(parseInt(data.page)-1);
+                        refresh_search(parseInt(data.page,10)-1);
                     })
                     .appendTo("#content_container");
                 }
-
-
             }
 
             //create a placeholder in the #side
@@ -192,6 +183,11 @@ function rename_search_rows(){
             .text('--->')
             .appendTo('#side .reagent_titlebar');
 
+            //automatically show details if the search only returns one reagent (remember the "-->" placeholder is also a ".reagent_titlebar" so we check for 2)
+            if($('.reagent_titlebar').length==2){
+                var element = $('.reagent_titlebar').first();
+                swap_reagents(element);
+            }
 
         },
         error: function(){
@@ -201,36 +197,3 @@ function rename_search_rows(){
         }
     });
 }
-
-
-function new_reagent(type){
-    var status;
-    $.ajax({
-        async: false,
-        type: "POST",
-        url: "utility/insert_new_reagent.php",
-        dataType: 'json',
-        data: {
-            r_reagent_type:type
-        }
-    })
-    //TODO no real reason why I need to do this as AJAX, submit a form to insert_new_reagent.php and use header('Location: ../index.php?r_rid=75'); 
-    .done(function( data ) {
-        if(data.rows == 1){
-            var pathname = window.location.pathname;
-            var new_rid  = data.new_rid;
-            // alert(pathname);
-            window.location.href = pathname+"?r_rid="+new_rid;
-        }
-        else{ status = 0; }
-    })
-    .fail(function(){status = 0;});
-}
-
-
-
-
-
-
-
-

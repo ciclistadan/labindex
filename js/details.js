@@ -1,55 +1,62 @@
 function bind_titlebar_functions(single_element) {
     var selector;
-    //if an elmenet is used as an argument, only bind that, otherwise bind all .reagent_titlebar classes
+    //if an elemenet is used as an argument, only bind that, otherwise bind all .reagent_titlebar classes
     if($(single_element).length > 0){
         selector = $(single_element);
     }
     else{
         selector = $(".reagent_titlebar");
     }
+    
     //add a click function to the reagent titlebar that will toggle details
-    var type;
-    var rid;
-    $(selector).click(function swap_reagents(){
-
-        // prevent detail requests without authentication
-        // this is not a 'real' security checkpoint, just prevents error messages when the server checks your credentials
-        if($('.verified').length == 1){
-
-            //if placeholder is in the #side container
-            if($('#side').find('.placeholder').first().length == 1){
-
-                $(this).parent().replaceWith($('#side').find('.placeholder').first()).appendTo($('#side'));
-
-            }
-            //else placeholder in in the list and another reagent is in the #side
-            else{
-                $('#side').find('.reagent_titlebar').siblings().remove();
-                bind_titlebar_functions($('#side').find('.reagent_titlebar'));
-
-                $('.placeholder').first().replaceWith($('#side').find('.reagent_div')).appendTo('#side');
-                $(this).closest('.reagent_div').replaceWith($('#side').find('.placeholder')).appendTo($('#side'));
-            }
-            type = $(this).closest('.table_id').attr('type');
-            rid = $(this).closest('.table_id').attr('identifier');
-
-            create_fields(type,rid);
-            populate_details(rid);
-            create_aliquots(rid);
-
-            //resize the textareas to fit actual text
-            $('#side textarea').keyup(function (){
-                $(this).height( 0 );
-                $(this).height( this.scrollHeight );
-            });
-            $('#side textarea').keyup();
-
-        }    
-        else{
-            alert("You are not properly authenticated to view reagent details");
-        }
+    $(selector).click(function(){
+        swap_reagents($(this));
     });
 }
+
+
+function swap_reagents(element){
+    var type;
+    var rid;
+    var this_element = element.length > 0 ? element : $(this);
+
+    // prevent detail requests without authentication
+    // this is not a 'real' security checkpoint, just prevents error messages when the server checks your credentials
+    if($('.verified').length == 1){
+
+        //if placeholder is in the #side container
+        if($('#side').find('.placeholder').first().length == 1){
+
+            $(this_element).parent().replaceWith($('#side').find('.placeholder').first()).appendTo($('#side'));
+
+        }
+        //else placeholder in in the list and another reagent is in the #side
+        else{
+            $('#side').find('.reagent_titlebar').siblings().remove();
+            bind_titlebar_functions($('#side').find('.reagent_titlebar'));
+
+            $('.placeholder').first().replaceWith($('#side').find('.reagent_div')).appendTo('#side');
+            $(this_element).closest('.reagent_div').replaceWith($('#side').find('.placeholder')).appendTo($('#side'));
+        }
+        type = $(this_element).closest('.table_id').attr('type');
+        rid = $(this_element).closest('.table_id').attr('identifier');
+
+        create_fields(type,rid);
+        populate_details(rid);
+        create_aliquots(rid);
+
+        //resize the textareas to fit actual text
+        $('#side textarea').keyup(function (){
+            $(this).height( 0 );
+            $(this).height( this.scrollHeight );
+        });
+        $('#side textarea').keyup();
+    }
+    else{
+        alert("You are not properly authenticated to view reagent details");
+    }
+}
+
 
 function create_fields(type,id) {
     $.ajax({

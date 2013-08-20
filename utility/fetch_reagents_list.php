@@ -12,11 +12,11 @@ if ( isset( $_POST['search'] ) ){
     }
     mysqli_free_result($result);
 
+    $sql_LOGIC = " FROM reagents" 
+                ." LEFT JOIN aliquots ON reagents.r_rid = aliquots.aq_rid" 
+                ." LEFT JOIN containers ON containers.c_cid = aliquots.aq_cid"
+                ." WHERE 1=1"; //TODO, incorporate initial WHERE query into real logic below
 
-    $sql_LOGIC = " FROM reagents, aliquots, containers" 
-            ." WHERE reagents.r_rid = aliquots.aq_rid"
-            ." AND containers.c_cid = aliquots.aq_cid";
-    
     //parse the search fields and terms, append to the sql_LOGIC string
     foreach ( $_POST['search'] as $row )
     {
@@ -96,7 +96,7 @@ if ($result = mysqli_query($link, $query)) {
             }
 
             $response = array(
-                // query => $query,
+                query => $query,
                 totalRows => $totalRows,
                 pages     => $pages,
                 page      => $page,
@@ -109,7 +109,7 @@ if ($result = mysqli_query($link, $query)) {
             mysqli_free_result($result);
 
         }
-    else{$response = array(rows => '0');
+    else{$response = array(query => $query,rows => '0');
     }
 }
 else{$response = array(rows => '-1');

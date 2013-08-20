@@ -1,5 +1,6 @@
 <?php session_start();
 
+$url = '../index.php';
 if(isset($_SESSION['userid'])){
     require_once '../../secret/database2.php';
 
@@ -12,22 +13,23 @@ if(isset($_SESSION['userid'])){
     //make the insert query
         mysqli_query($link, $query);
 
-        $response = array(
-            query   => $query,
-            rows    => mysqli_affected_rows($link),
-            new_rid => mysqli_insert_id($link)
-            );
-        echo json_encode($response);
+
+        $page = $url.'?r_rid='.mysqli_insert_id($link);
+        header("Location: ".$page);
+        exit;
     }
 //else return rows=0
     else {
-        $response = array(rows => '0');
-        echo json_encode($response);
-    }
+        // not posted correctly, unclear what type of reagent to insert
+       header("Location: ".$url);
+       exit;
+   }
 
-    mysqli_close($link);
+   mysqli_close($link);
 } else {
-    $response = array(status => '0');
-    echo json_encode($response);
+    // not authenticated
+    header("Location: ".$url);
+    exit;
 }
+
 ?>

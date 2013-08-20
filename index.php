@@ -9,6 +9,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>LabIndex Database</title>
+    <link rel="shortcut icon" href="./images/COLOURlovers_Paper_Sea_FAVICON.png" />
 
     <!-- style  -->
     <link rel="stylesheet" type="text/css" href="./css/main.css">
@@ -30,19 +31,17 @@
 
  <script type="text/javascript">
 
-    //the QUERY_STRING is the string of text after the ? in the url
-    var query_string = '<? echo $_SERVER['QUERY_STRING'] ?>';
-
-
     $(function(){
 
+        // make all elements with class="button" a jQueryUI Button
         $('.button').button();
-        // assign page control functions
+
+        //TODO: let the user define the quantity of reagents to return from a search
         <?php $_SESSION['qty'] = 10; ?>      
 
-        $('.new_reagent_button').change(function(){
-            var type = $(this).val();
-            new_reagent(type);
+        // assign page control functions
+        $('.new_reagent_select').change(function(){
+            $(this).closest('.new_reagent_form').submit();
         });
 
         $( "#quick-locations" ).dialog({ 
@@ -53,7 +52,6 @@
         $( "#opener" ).click(function() {
             $( "#quick-locations" ).dialog( "open" );
         });
-
     });
 
     </script>
@@ -62,17 +60,20 @@
 <body>
     <div id="container">
         <div id="navbar">
-            <a href="http://connorlab.com/">Connor Lab</a>
             <a href="http://connorlab.com/labindex/index.php">LabIndex Database</a>
-            <select class="new_reagent_button">
+            <a href="http://connorlab.com/">Connor Lab</a>
+            <form class="new_reagent_form" action="./utility/insert_new_reagent.php" method="post" style="display:inline">
+            <select class="new_reagent_select" name="r_reagent_type" >
                 <option val="default">add a new reagent</>
                 <option val="antibody">antibody</>
                 <option val="virus">virus</>
                 <option val="chemical">chemical</>
                 <option val="supply">supply</>
             </select>
+            </form>
             <button id="email_comments">Email Comments</button>
             <button id="opener">Quick Locations</button>
+            <!-- <button id="test">Test</button> -->
             
 
             <span class="user_panel">
@@ -88,14 +89,7 @@
         </div>
         <div id="top">
             <form class="search_form">
-                <div class="search_row">
-                    <input name="search[0][text]" class="search_input" type="text" value="antibody">
-                    <select name="search[0][field]" class="search_field" type="text" >
-                        <?php include './utility/search_options.php'; ?>
-                    </select>
-                    <div class="add_search_row button ui-icon ui-icon-plus">add</div>
-                </div>
-
+                <? include './utility/search_options.php'; ?>
             </form>
 
         </div>
@@ -126,7 +120,7 @@
             <li>20130812</li>advanced search by using multiple filtering criteria
             <li>20130803</li>added the container 'viruses from don' to the database
             <li>20130801</li>added delay in search function to prevent duplicates
-            <li>20130801</li>website goes live on <a href="www.connorlab.com/labindex/">connorlab.com</a>!
+            <li>20130801</li>website goes live on <a href="http://www.connorlab.com/labindex/">connorlab.com</a>!
         </div>
 
 </body>
