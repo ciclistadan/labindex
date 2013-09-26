@@ -4,13 +4,18 @@ require_once '../../secret/database2.php';
 // reagent searching for does not require authentication, this function inly returns systematicname of all reagents
 
 if ( isset( $_POST['search'] ) ){
-    // get a list of all columns, this can be hard-coded once we stabilize the database structure
-    $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='labindex' AND TABLE_NAME='reagents' OR TABLE_NAME='containers' OR TABLE_NAME='aliquots' LIMIT 0,100";
-    $result = mysqli_query($link, $query);
-    while ($row = mysqli_fetch_assoc($result)) {
-        $columns[] = $row['COLUMN_NAME'];
-    }
-    mysqli_free_result($result);
+    
+
+    // dynamically queries a list of all columns, currently querys from INFORMATION_SCHEMA on hostgator are taking long amounts of time so this has been hard coded
+    // $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='reagents' OR TABLE_NAME='containers' OR TABLE_NAME='aliquots' LIMIT 0,100";
+    // $result = mysqli_query($link, $query);
+    // while ($row = mysqli_fetch_assoc($result)) {
+    //     $columns[] = $row['COLUMN_NAME'];
+    // }
+    // mysqli_free_result($result);
+
+
+    $columns = array('aq_aqid','aq_name','aq_amount','aq_conc','aq_lot','aq_creator','aq_notes','aq_rid','aq_cid','c_cid','c_cname','c_temp','c_location','c_description','r_rid','r_reagent_type','r_systematicname','r_altname','r_rating','r_link','r_notes','r_mfrname','r_mfrid','r_source','r_flag','r_ab_antigen','a_ab_clone','a_ab_targetspecies','a_ab_clonality','a_ab_hostspecies','a_ab_modification','a_ab_ifa','a_ab_wb','a_ab_other','r_virus_species');
 
     $sql_LOGIC = " FROM reagents" 
                 ." LEFT JOIN aliquots ON reagents.r_rid = aliquots.aq_rid" 
@@ -41,7 +46,7 @@ if ( isset( $_POST['search'] ) ){
 
 ///////////////////////////////////////////////////////////////////////////////
 // determine how many pages are needed
-$sql_COUNT  = "SELECT DISTINCT count(*) AS totalCount ";
+$sql_COUNT  = "SELECT count(distinct r_rid) AS totalCount ";
 $query = $sql_COUNT . $sql_LOGIC;
 
 // perform a query to retreive the total result count without limits
